@@ -1,0 +1,36 @@
+version: '3.9'
+
+services: 
+  server:
+    build: .
+    ports:
+      - '3000:3000'
+    environment:
+      DB_PASSWORD: password
+      DB_USER: aschrad
+      DB_NAME: blog
+      DB_HOST: db
+
+  db:
+    image: postgres:14
+    environment:
+      POSTGRES_USER: aschrad
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: blog
+    ports:
+      - "15432:5432"
+    volumes:
+      - ./data:/var/lib/postgresql/data
+
+  pg-admin:
+      image: dpage/pgadmin4:6
+      environment:
+        - PGADMIN_DEFAULT_EMAIL=aschrader319@gmail.com
+        - PGADMIN_DEFAULT_PASSWORD=admin
+        - PGADMIN_LISTEN_PORT=5050
+
+      ports:
+        - "5050:5050"
+
+volumes:
+  data:
