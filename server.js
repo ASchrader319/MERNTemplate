@@ -1,21 +1,41 @@
-const express = require('express');
-const morgan = require('morgan')
-
-const db = require('./db');
-
-const PORT = process.env.port || 3000
-const app = express();
-
-app.use(morgan('dev'));
-app.use(express.json());
-app.use(express.urlencoded({extended: true}));
-
-let count = 0;
+const path = require('path');
+const dotenv = require('dotenv');
+const mongoose = require('mongoose');
+const cors = require('cors');
+dotenv.config({
+    path: path.join(__dirname, '.env'),
 
 
-app.get('/', (req, res) => {
-    count++;
-    res.send(`Hello World!  ${count} \n`);
-} );
+});
 
-app.listen(3000,() => console.log (`Server is running on port $PORT`));
+const app = require("./app");
+app.use(cors());
+
+
+const {
+    PORT,
+    DATABASE_CONNECTION_STRING: DATABASE_CONNECTION_STRINGS,
+} = require("./configs");
+
+
+app.use((req, res, next) => 
+{
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader(
+    'Access-Control-Allow-Headers',
+    'Origin, X-Requested-With, Content-Type, Accept, Authorization'
+  );
+  res.setHeader(
+    'Access-Control-Allow-Methods',
+    'GET, POST, PATCH, DELETE, OPTIONS'
+  );
+  next();
+});
+
+mongoose.connect(DATABASE_CONNECTION_STRINGS).then(()=>{
+    console.log('database connected')
+
+    app.listen(PORT,() => {
+        console.log(`sever started listening on port ${PORT}...`)
+    });
+});
