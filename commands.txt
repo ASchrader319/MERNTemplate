@@ -1,9 +1,0 @@
-docker build -t p-web .
-
-docker-compose up -d
-
-docker-compose up --build -d
-
-docker exec personalwebsite-server-1 npm run migrate
-
-psql postgres://aschrad:password@localhost:15432/blog
